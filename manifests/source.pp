@@ -1,7 +1,7 @@
 # source.pp
 # add an apt source
 
-define apt::source(
+define apt::source (
   $ensure            = present,
   $location          = '',
   $release           = 'UNDEF',
@@ -12,14 +12,12 @@ define apt::source(
   $key_server        = 'keyserver.ubuntu.com',
   $key_content       = false,
   $key_source        = false,
-  $pin               = false
-) {
-
+  $pin               = false) {
   include apt::params
   include apt::update
 
   $sources_list_d = $apt::params::sources_list_d
-  $provider       = $apt::params::provider
+  $provider = $apt::params::provider
 
   if $release == 'UNDEF' {
     if $::lsbdistcodename == undef {
@@ -41,11 +39,10 @@ define apt::source(
     notify  => Exec['apt_update'],
   }
 
-
   if ($pin != false) {
     # Get the host portion out of the url so we can pin to origin
     $url_split = split($location, '/')
-    $host      = $url_split[2]
+    $host = $url_split[2]
 
     apt::pin { $name:
       ensure   => $ensure,
@@ -77,7 +74,5 @@ define apt::source(
   }
 
   # Need anchor to provide containment for dependencies.
-  anchor { "apt::source::${name}":
-    require => Class['apt::update'],
-  }
+  #anchor { "apt::source::${name}": require => Class['apt::update'], }
 }
